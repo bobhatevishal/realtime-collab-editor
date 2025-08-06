@@ -1,1 +1,33 @@
+import React, { useState } from 'react';
+import axios from 'axios';
 
+const BACKEND_URL = "http://<backend-ec2-ip>:4000/edit";
+
+function App() {
+  const [doc, setDoc] = useState('');
+
+  const handleChange = async (e) => {
+    const newChar = e.nativeEvent.data || '';
+    const position = e.target.selectionStart - 1;
+
+    const res = await axios.post(BACKEND_URL, {
+      documentId: 'doc1',
+      operation: {
+        type: 'insert',
+        char: newChar,
+        position: position
+      }
+    });
+
+    setDoc(res.data.content);
+  };
+
+  return (
+    <div>
+      <h2>📝 Real-Time Collaborative Editor</h2>
+      <textarea value={doc} onChange={handleChange} rows="10" cols="60" />
+    </div>
+  );
+}
+
+export default App;
